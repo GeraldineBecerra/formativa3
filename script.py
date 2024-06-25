@@ -3,12 +3,11 @@ import csv
 
 def inicio():
     inicio = True
-    menu = ("1.Registrar trabajador","2.Listar todos los trabajadores","3.Imprimir planill de sueldos","4.Salir")
-    for i in menu:
-        print(i)
-    opcion = int(input("Ingrese una opciòn"))
-
     while inicio:
+        menu = ("1.Registrar trabajador","2.Listar todos los trabajadores","3.Imprimir planill de sueldos","4.Salir")
+        for i in menu:
+            print(i)
+        opcion = int(input("Ingrese una opciòn"))
         if opcion == 1:
             registrar()
         elif opcion == 2:
@@ -19,41 +18,45 @@ def inicio():
             inicio = False
 
 def registrar():
-    columnas = ["Trabajador","Cargo","Sueldo Bruto","Desc. Salud","Desc.AFP","Liquido a pagar"]
-    with open("trabajadores.csv","w",newline='') as trabajador:
-        nuevoTrabajador = csv.writer(trabajador)
-        nuevoTrabajador.writerows(["Trabajador","Cargo","Sueldo Bruto","Desc. Salud","Desc.AFP","Liquido a pagar"])
+    archivo = "trabajadores.csv"
+    archivoExiste = os.path.isfile(archivo)
+    if not archivoExiste:
+        with open("trabajadores.csv","w",newline='') as trabajador:
+            nuevoTrabajador = csv.writer(trabajador)
+            nuevoTrabajador.writerow(["Trabajador","Cargo","Sueldo Bruto","Desc. Salud","Desc.AFP","Liquido a pagar"])
 
-    cantTrabajadores = input("cuantos trabajadores desea agregar?")
-    for i in cantTrabajadores:
+    cantTrabajadores = int(input("cuantos trabajadores desea agregar?"))
+    for _ in range(cantTrabajadores):
         nombre = input("Nombre y apellido")
         cargo = input("Cargo")
         sueldoBruto= int(input("Sueldo bruto"))
-
         salud = sueldoBruto * 0.07
         afp = sueldoBruto * 0.12
         sueldoLiquido = sueldoBruto - salud - afp
-        nuevoTrabajador.writerow(nombre,cargo,sueldoBruto,salud,sueldoLiquido)
 
+        with open("trabajadores.csv","a",newline='') as trabajador:
+            nuevoTrabajador = csv.writer(trabajador)
+            nuevoTrabajador.writerow([nombre,cargo,sueldoBruto,salud,afp,sueldoLiquido])
+        print("Trabajador agregado con exito")
 
-
-        
 def listar():
     with open("trabajadores.csv","r",newline='') as trabajador:
-        nuevoTrabajador = trabajador
-        prueba = nuevoTrabajador.read()
-        for i in prueba:
+        nuevoTrabajador = csv.reader(trabajador)
+        for i in nuevoTrabajador:
             print(i)
- 
-
+          
 def planilla():
-    planilla = True
-    menu = ("1.CEO","2.Desarrollador","3.Analista de datos","4.Salir")
+    menu = ("ceo","Desarrollador","Analista de datos")
     for i in menu:
         print(i)
-    opcion = int(input("Ingrese la opcion de la planilla que desea ver"))
+    with open("trabajadores.csv","r",newline='') as trabajador:
+        opcion = input("Ingrese la opcion de la planilla que desea ver")
+
+        nuevoTrabajador = csv.reader(trabajador)
+        for i in nuevoTrabajador:
+            if i[1] == opcion:
+                print(i)
     
-        
     
 inicio()
 
